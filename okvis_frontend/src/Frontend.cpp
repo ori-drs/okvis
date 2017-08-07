@@ -62,6 +62,10 @@
 #include <opengv/sac_problems/relative_pose/FrameRelativePoseSacProblem.hpp>
 #include <opengv/sac_problems/relative_pose/FrameRotationOnlySacProblem.hpp>
 
+
+/// 0 none, 1 some, 2 loads
+int verbose_level_mfallon = 1;
+
 /// \brief okvis Main namespace of this package.
 namespace okvis {
 
@@ -706,6 +710,12 @@ int Frontend::runRansac2d2d(okvis::Estimator& estimator,
     int rel_pose_inliers = rel_pose_ransac.inliers_.size();
     float rel_pose_ratio = float(rel_pose_inliers) / float(numCorrespondences);
 
+    if (verbose_level_mfallon>0){
+      std::cout << rotation_only_inliers << " rotation_only_inliers\n";
+      std::cout << rel_pose_inliers << " rel_pose_inliers\n";
+      std::cout << rotation_only_ratio << " rotation_only_ratio\n";
+    }
+
     // decide on success and fill inliers
     std::vector<bool> inliers(numCorrespondences, false);
     if (rotation_only_ratio > rel_pose_ratio || rotation_only_ratio > 0.8) {
@@ -750,6 +760,11 @@ int Frontend::runRansac2d2d(okvis::Estimator& estimator,
           }
         }
       }
+    }
+
+    if (verbose_level_mfallon>0){
+      std::cout << rotation_only_success << " rotation_only_success\n";
+      std::cout << rel_pose_success << " rel_pose_success\n";
     }
 
     // initialize pose if necessary
