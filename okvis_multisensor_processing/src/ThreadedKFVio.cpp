@@ -449,7 +449,7 @@ void ThreadedKFVio::frameConsumerLoop(size_t cameraIndex) {
       }
       waitForMatchingThreadTimer.stop();
     }
-    LOG(INFO) << okvis::timing::Timing::print(); // @davidwisth added this line
+    //LOG(INFO) << okvis::timing::Timing::print(); // @davidwisth uncomment to enable printing of timing information.
   }
 }
 

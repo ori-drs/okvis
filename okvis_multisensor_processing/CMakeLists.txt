@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(okvis_multisensor_processing)
 
+set(DO_TIMING ON) # @davidwisth added this line.
 if(NOT DO_TIMING)
   add_definitions(-DDEACTIVATE_TIMERS)
   message(STATUS "Deactivating timers.")
@@ -12,11 +13,11 @@ message(STATUS ${CMAKE_CURRENT_BINARY_DIR}/okvisConfig.hpp)
 
 # require Eigen
 find_package( Eigen REQUIRED )
-include_directories(${EIGEN_INCLUDE_DIR}) 
+include_directories(${EIGEN_INCLUDE_DIR})
 
 # require OpenCV
 find_package( OpenCV COMPONENTS core highgui imgproc features2d REQUIRED )
-include_directories(BEFORE ${OpenCV_INCLUDE_DIRS}) 
+include_directories(BEFORE ${OpenCV_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME}
   src/ThreadedKFVio.cpp
@@ -32,14 +33,14 @@ add_library(${PROJECT_NAME}
   okvisConfig.hpp
 )
 
-# and link it                     
+# and link it
 target_link_libraries(${PROJECT_NAME}
    PUBLIC okvis_time
    PUBLIC okvis_util
-   PUBLIC okvis_kinematics 
-   PUBLIC okvis_cv 
+   PUBLIC okvis_kinematics
+   PUBLIC okvis_cv
    PUBLIC okvis_common
-   PUBLIC okvis_ceres 
+   PUBLIC okvis_ceres
    PUBLIC okvis_frontend
    PRIVATE ${GLOG_LIBRARIES}
 )
@@ -49,7 +50,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER ${CMAKE_CURRENT_B
 
 # installation if required
 install(TARGETS ${PROJECT_NAME}
-  EXPORT okvisTargets 
+  EXPORT okvisTargets
   ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
   PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/okvis" COMPONENT dev
 )
@@ -72,9 +73,9 @@ if(BUILD_TESTS)
       test/testDataFlow.cpp
       test/testSynchronizer.cpp
     )
-    target_link_libraries(${PROJECT_TEST_NAME} 
+    target_link_libraries(${PROJECT_TEST_NAME}
       ${GTEST_LIBRARY}
-      ${GMOCK_LIBRARY}  
+      ${GMOCK_LIBRARY}
       ${PROJECT_NAME}
       ${CERES_LIBRARIES}
       ${OpenCV_LIBRARIES}
@@ -82,4 +83,3 @@ if(BUILD_TESTS)
     add_test(test ${PROJECT_TEST_NAME} )
   endif(APPLE)
 endif()
-

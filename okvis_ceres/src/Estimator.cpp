@@ -780,11 +780,11 @@ void Estimator::printStates(uint64_t poseId, std::ostream & buffer) const {
       uint64_t id = statesMap_.at(poseId).global.at(i).id;
       if(mapPtr_->parameterBlockPtr(id)->fixed())
         buffer << "(";
-      buffer << "id="<<id<<":";
-      buffer << mapPtr_->parameterBlockPtr(id)->typeInfo();
+        buffer << "id="<<id<<":";
+        buffer << mapPtr_->parameterBlockPtr(id)->typeInfo();
       if(mapPtr_->parameterBlockPtr(id)->fixed())
         buffer << ")";
-      buffer <<", ";
+        buffer <<", ";
     }
   }
   buffer << "SENSOR: ";
@@ -795,11 +795,12 @@ void Estimator::printStates(uint64_t poseId, std::ostream & buffer) const {
           uint64_t id = statesMap_.at(poseId).sensors.at(i).at(j).at(k).id;
           if(mapPtr_->parameterBlockPtr(id)->fixed())
             buffer << "(";
-          buffer << "id="<<id<<":";
-          buffer << mapPtr_->parameterBlockPtr(id)->typeInfo();
+            buffer << "id="<<id<<":";
+            buffer << mapPtr_->parameterBlockPtr(id)->typeInfo(); //@davidwisth: could extract more info here!
+            //mapPtr_->printParameterBlockInfo(id);
           if(mapPtr_->parameterBlockPtr(id)->fixed())
             buffer << ")";
-          buffer <<", ";
+            buffer <<", ";
         }
       }
     }
@@ -868,7 +869,8 @@ void Estimator::optimize(size_t numIter, size_t /*numThreads*/,
   mapPtr_->options.max_num_iterations = numIter;
 
   if (verbose) {
-    mapPtr_->options.minimizer_progress_to_stdout = true;
+    //mapPtr_->options.minimizer_progress_to_stdout = true;
+    mapPtr_->options.minimizer_progress_to_stdout = false; // @davidwisth - don't want to see optimisation steps.
   } else {
     mapPtr_->options.minimizer_progress_to_stdout = false;
   }
@@ -903,6 +905,59 @@ void Estimator::optimize(size_t numIter, size_t /*numThreads*/,
   if (verbose) {
     //LOG(INFO) << mapPtr_->summary.FullReport();
     LOG(INFO) << mapPtr_->summary.BriefReport(); // @davidwisth change to brief report.
+
+    // @davidwisth Added the code below to view.
+    // Note: state IDs are held in the statesMap_ object.
+    LOG(INFO) << "Optimiser State Information:";
+    for (std::map<uint64_t, States>::const_reverse_iterator rit = statesMap_.rbegin();
+        rit != statesMap_.rend(); ++rit) {
+          // rit-> first refers to the uint_64, rit->second refer to the States object. (it is a vector of "pairs").
+          LOG(INFO)
+            << ">>>>> state id: " << rit->second.id
+            << ", is keyframe: " << rit->second.isKeyframe
+            << ", timestamp: " << (rit->second.timestamp.toSec() - 1403715273.312143000); // hardcoded initial time.
+    }
+    for (std::map<uint64_t, States>::const_reverse_iterator rit = statesMap_.rbegin();
+        rit != statesMap_.rend(); ++rit) {
+          // Print a summary of the state information
+          Estimator::printStates(rit->first, LOG(INFO));
+
+          // Print out detailed information for each state.
+          // uint64_t poseId = rit->second.id;
+          // for(size_t i = 0; i<statesMap_.at(poseId).global.size(); ++i){
+          //   if(statesMap_.at(poseId).global.at(i).exists) {
+          //     uint64_t id = statesMap_.at(poseId).global.at(i).id;
+          //     if(mapPtr_->parameterBlockPtr(id)->fixed())
+          //       mapPtr_->printParameterBlockInfo(id);
+          //   }
+          // }
+          // for(size_t i = 0; i<statesMap_.at(poseId).sensors.size(); ++i){
+          //   for(size_t j = 0; j<statesMap_.at(poseId).sensors.at(i).size(); ++j){
+          //     for(size_t k = 0; k<statesMap_.at(poseId).sensors.at(i).at(j).size(); ++k){
+          //       if(statesMap_.at(poseId).sensors.at(i).at(j).at(k).exists) {
+          //         LOG(INFO) << "i=" << i << ", j=" << j << ", k=" << k;
+          //         uint64_t id = statesMap_.at(poseId).sensors.at(i).at(j).at(k).id;
+          //         if(mapPtr_->parameterBlockPtr(id)->fixed())
+          //           mapPtr_->printParameterBlockInfo(id);
+          //       }
+          //     }
+          //   }
+          // }
+    }
+    // Print out simplified Parameter block information, because each State appears to point to the same objects.
+    std::map<uint64_t, States>::const_reverse_iterator rit = statesMap_.rbegin();
+    uint64_t poseId = rit->second.id;
+    for(size_t i = 0; i<statesMap_.at(poseId).sensors.size(); ++i){
+      for(size_t j = 0; j<statesMap_.at(poseId).sensors.at(i).size(); ++j){
+        for(size_t k = 0; k<statesMap_.at(poseId).sensors.at(i).at(j).size(); ++k){
+          if(statesMap_.at(poseId).sensors.at(i).at(j).at(k).exists) {
+            uint64_t id = statesMap_.at(poseId).sensors.at(i).at(j).at(k).id;
+            if(mapPtr_->parameterBlockPtr(id)->fixed())
+              mapPtr_->printParameterBlockInfo(id);
+          }
+        }
+      }
+    }
   }
 }
 

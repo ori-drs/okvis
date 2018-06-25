@@ -4,7 +4,7 @@
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice,
@@ -79,6 +79,7 @@ void Map::printParameterBlockInfo(uint64_t parameterBlockId) const {
             << " - type: " << parameterBlockPtr(parameterBlockId)->typeInfo()
             << std::endl << " - residuals (" << residualCollection.size()
             << "):";
+  /*
   for (size_t i = 0; i < residualCollection.size(); ++i) {
     LOG(INFO)
         << "   - id: "
@@ -87,6 +88,7 @@ void Map::printParameterBlockInfo(uint64_t parameterBlockId) const {
         << "   - type: "
         << errorInterfacePtr(residualCollection.at(i).residualBlockId)->typeInfo();
   }
+  */ // @davidwisth: commented out this line - too much information.
   LOG(INFO) << "============================";
 }
 
@@ -716,4 +718,3 @@ Map::ParameterBlockCollection Map::parameters(
 
 }  //namespace okvis
 }  //namespace ceres
-
