@@ -4,7 +4,7 @@
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice,
@@ -757,7 +757,7 @@ bool Estimator::applyMarginalizationStrategy(
   if (!marginalizationResidualId_)
     return false;
   }
-	
+
 	if(reDoFixation){
 	  // finally fix the first pose properly
 		//mapPtr_->resetParameterization(statesMap_.begin()->first, ceres::Map::Pose3d);
@@ -901,7 +901,8 @@ void Estimator::optimize(size_t numIter, size_t /*numThreads*/,
 
   // summary output
   if (verbose) {
-    LOG(INFO) << mapPtr_->summary.FullReport();
+    //LOG(INFO) << mapPtr_->summary.FullReport();
+    LOG(INFO) << mapPtr_->summary.BriefReport(); // @davidwisth change to brief report.
   }
 }
 
@@ -1302,5 +1303,3 @@ bool Estimator::setSensorStateEstimateAs(
 }
 
 }  // namespace okvis
-
-

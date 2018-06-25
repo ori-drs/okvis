@@ -4,7 +4,7 @@
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice,
@@ -110,7 +110,7 @@ void ThreadedKFVio::init() {
           std::shared_ptr<threadsafe::ThreadSafeQueue<std::shared_ptr<okvis::CameraMeasurement> > >
           (new threadsafe::ThreadSafeQueue<std::shared_ptr<okvis::CameraMeasurement> >()));
   }
-  
+
   // set up windows so things don't crash on Mac OS
   if(parameters_.visualization.displayImages){
     for (size_t im = 0; im < parameters_.nCameraSystem.numCameras(); im++) {
@@ -119,7 +119,7 @@ void ThreadedKFVio::init() {
   	  cv::namedWindow(windowname.str());
     }
   }
-  
+
   startThreads();
 }
 
@@ -183,6 +183,7 @@ ThreadedKFVio::~ThreadedKFVio() {
   s << endPosition.r();
   LOG(INFO) << "Sensor end position:\n" << s.str();
   LOG(INFO) << "Distance to origin: " << endPosition.r().norm();*/
+
 #ifndef DEACTIVATE_TIMERS
   LOG(INFO) << okvis::timing::Timing::print();
 #endif
@@ -332,7 +333,6 @@ void ThreadedKFVio::frameConsumerLoop(size_t cameraIndex) {
   TimerSwitchable waitForFrameSynchronizerMutexTimer2("1.3.1 waitForFrameSynchronizerMutex2"+std::to_string(cameraIndex),true);
   TimerSwitchable waitForMatchingThreadTimer("1.4 waitForMatchingThread"+std::to_string(cameraIndex),true);
 
-
   for (;;) {
     // get data and check for termination request
     if (cameraMeasurementsReceived_[cameraIndex]->PopBlocking(&frame) == false) {
@@ -449,6 +449,7 @@ void ThreadedKFVio::frameConsumerLoop(size_t cameraIndex) {
       }
       waitForMatchingThreadTimer.stop();
     }
+    LOG(INFO) << okvis::timing::Timing::print(); // @davidwisth added this line
   }
 }
 
@@ -733,7 +734,7 @@ void ThreadedKFVio::optimizationLoop() {
       std::lock_guard<std::mutex> l(estimator_mutex_);
       optimizationTimer.start();
       //if(frontend_.isInitialized()){
-        estimator_.optimize(parameters_.optimization.max_iterations, 2, false);
+        estimator_.optimize(parameters_.optimization.max_iterations, 2, true); // @davidwisth change third argument (verbose) to true. Default false.
       //}
       /*if (estimator_.numFrames() > 0 && !frontend_.isInitialized()){
         // undo translation

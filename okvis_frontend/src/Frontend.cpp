@@ -4,7 +4,7 @@
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice,
@@ -667,6 +667,9 @@ int Frontend::runRansac2d2d(okvis::Estimator& estimator,
 
     size_t numCorrespondences = adapter.getNumberCorrespondences();
 
+    // @davidwisth
+    LOG(INFO) << "Number of inliers found: " << numCorrespondences;
+
     if (numCorrespondences < 10)
       continue;  // won't generate meaningful results. let's hope the few correspondences we have are all inliers!!
 
@@ -821,12 +824,12 @@ void Frontend::initialiseBriskFeatureDetectors() {
     featureDetectors_.push_back(
         std::shared_ptr<cv::FeatureDetector>(
 #ifdef __ARM_NEON__
-            new cv::GridAdaptedFeatureDetector( 
+            new cv::GridAdaptedFeatureDetector(
             new cv::FastFeatureDetector(briskDetectionThreshold_),
                 briskDetectionMaximumKeypoints_, 7, 4 ))); // from config file, except the 7x4...
 #else
             new brisk::ScaleSpaceFeatureDetector<brisk::HarrisScoreCalculator>(
-                briskDetectionThreshold_, briskDetectionOctaves_, 
+                briskDetectionThreshold_, briskDetectionOctaves_,
                 briskDetectionAbsoluteThreshold_,
                 briskDetectionMaximumKeypoints_)));
 #endif
