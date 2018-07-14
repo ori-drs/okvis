@@ -77,18 +77,24 @@ void Map::printParameterBlockInfo(uint64_t parameterBlockId) const {
   LOG(INFO) << "parameter info" << std::endl << "----------------------------"
             << std::endl << " - block Id: " << parameterBlockId << std::endl
             << " - type: " << parameterBlockPtr(parameterBlockId)->typeInfo()
-            << std::endl << " - residuals (" << residualCollection.size()
-            << "):";
-  /*
-  for (size_t i = 0; i < residualCollection.size(); ++i) {
-    LOG(INFO)
-        << "   - id: "
-        << residualCollection.at(i).residualBlockId
-        << std::endl
-        << "   - type: "
-        << errorInterfacePtr(residualCollection.at(i).residualBlockId)->typeInfo();
-  }
-  */ // @davidwisth: commented out this line - too much information.
+            << std::endl << " - residuals: " << residualCollection.size()
+            << std::endl << " - residual type: " << errorInterfacePtr(residualCollection.at(0).residualBlockId)->typeInfo();
+
+  // for (size_t i = 0; i < residualCollection.size(); ++i) {
+  //   LOG(INFO)
+  //       << "   - id: "
+  //       << residualCollection.at(i).residualBlockId
+  //       << ",   - type: "
+  //       << errorInterfacePtr(residualCollection.at(i).residualBlockId)->typeInfo();
+  //       //if (string::compare(errorInterfacePtr(residualCollection.at(i).residualBlockId)->typeInfo(), "ReprojectionError")==0) {
+  //       //  LOG(INFO)
+  //       //      << ",   - measurement: "
+  //       //      << (okvis::ceres::ReprojectionError)(errorInterfacePtr(residualCollection.at(i).residualBlockId))->measurement();
+  //       //}
+  // }
+   // @davidwisth: commented out this line - too much information.
+   // @davidwisth: returned type from: is:errorInterfacePtr(residualCollection.at(i).residualBlockId) std::shared_ptr<const okvis::ceres::ErrorInterface>
+   // Note: all measurement information is in the child class, not the parent class errorInterface!
   LOG(INFO) << "============================";
 }
 

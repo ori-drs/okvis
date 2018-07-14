@@ -944,7 +944,9 @@ void Estimator::optimize(size_t numIter, size_t /*numThreads*/,
           //   }
           // }
     }
-    // Print out simplified Parameter block information, because each State appears to point to the same objects.
+    // Print out simplified Parameter block information for the latest state only.
+    // Note: The PoseParameterBlock appears to point to the same objects for all states.
+    LOG(INFO) << "Residual information for the latest state:";
     std::map<uint64_t, States>::const_reverse_iterator rit = statesMap_.rbegin();
     uint64_t poseId = rit->second.id;
     for(size_t i = 0; i<statesMap_.at(poseId).sensors.size(); ++i){
@@ -952,8 +954,10 @@ void Estimator::optimize(size_t numIter, size_t /*numThreads*/,
         for(size_t k = 0; k<statesMap_.at(poseId).sensors.at(i).at(j).size(); ++k){
           if(statesMap_.at(poseId).sensors.at(i).at(j).at(k).exists) {
             uint64_t id = statesMap_.at(poseId).sensors.at(i).at(j).at(k).id;
-            if(mapPtr_->parameterBlockPtr(id)->fixed())
-              mapPtr_->printParameterBlockInfo(id);
+            mapPtr_->printParameterBlockInfo(id);
+            //mapPtr_->printResidualBlockInfo(id);
+            // Maybe use the .estimate()
+            //LOG(INFO) << mapPtr_->parameterBlockPtr(id)->estimate_t;
           }
         }
       }
